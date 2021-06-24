@@ -15,7 +15,7 @@ func ConnectDB() (db *gorm.DB) {
 		log.Fatal("error when connect to db ", err)
 		return
 	}
-	db.AutoMigrate(&User{}, &Category{}, &Brand{}, &Product{}, &Order{}, &ProductOrder{})
+
 	if err != nil {
 		log.Fatal("error when auto migrate table ", err)
 	}
@@ -33,15 +33,15 @@ type Product struct {
 	CreatedAt     time.Time      `json:"createdAt"`
 	UpdatedAt     time.Time      `json:"updatedAt"`
 	IsRendered    bool           `json:"isRendered"`
-	BrandId       int            `db:"brandId"`
-	CategoryId    int            `db:"categoryId"`
-	ProductOrders []ProductOrder `gorm:"foreignKey:ProductId"`
+	BrandId       int            `json:"brandId"`
+	CategoryId    int            `json:"categoryId"`
+	ProductOrders []ProductOrder `json:"productOrders" gorm:"foreignKey:ProductId"`
 }
 
 type Brand struct {
 	Id       int       `json:"id"`
 	Name     string    `json:"name"`
-	Products []Product `gorm:"foreignKey:BrandId"`
+	Products []Product `json:"products" gorm:"foreignKey:BrandId"`
 }
 
 type Order struct {
@@ -56,19 +56,19 @@ type Order struct {
 	CreatedAt     time.Time      `json:"createdAt"`
 	UpdatedAt     time.Time      `json:"updatedAt"`
 	IsRendered    bool           `json:"isRendered"`
-	ProductOrders []ProductOrder `gorm:"foreignKey:OrderId"`
+	ProductOrders []ProductOrder `json:"productOrders" gorm:"foreignKey:OrderId"`
 }
 
 type ProductOrder struct {
 	Id        int `json:"id"`
-	ProductId int `db:"productId"`
-	OrderId   int `db:"orderId"`
+	ProductId int `json:"productId"`
+	OrderId   int `json:"orderId"`
 }
 
 type Category struct {
 	Id       int       `json:"id"`
 	Name     string    `json:"name"`
-	Products []Product `gorm:"foreignKey:CategoryId"`
+	Products []Product `json:"products" gorm:"foreignKey:CategoryId"`
 }
 
 type User struct {

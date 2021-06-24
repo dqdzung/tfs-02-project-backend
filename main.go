@@ -8,7 +8,7 @@ import (
 func main() {
 	db := database.ConnectDB()
 
-	db.Migrator().DropTable(&database.User{}, &database.Category{}, &database.Brand{}, &database.Product{}, &database.Order{}, &database.ProductOrder{})
+	db.Debug().Migrator().DropTable(&database.User{}, &database.Category{}, &database.Brand{}, &database.Product{}, &database.Order{}, &database.ProductOrder{})
 
 	db.AutoMigrate(&database.User{}, &database.Category{}, &database.Brand{}, &database.Product{}, &database.Order{}, &database.ProductOrder{})
 
