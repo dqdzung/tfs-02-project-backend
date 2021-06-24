@@ -2,8 +2,8 @@ package server
 
 import (
 	"fmt"
-	"go-backend/controller"
 	"net/http"
+	"project-backend/controller"
 
 	"github.com/rs/cors"
 
