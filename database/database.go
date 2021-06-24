@@ -22,58 +22,54 @@ func ConnectDB() (db *gorm.DB) {
 	return db
 }
 
+
 type Product struct {
-	Id            int            `json:"id"`
-	Name          string         `json:"name"`
-	Price         float64        `json:"price"`
-	Sale          int            `json:"sale"`
-	Quantity      int            `json:"qty"`
-	Weight        float64        `json:"weight"`
+	Id            int            `json:"id" gorm:"int"`
+	Name          string         `json:"name" gorm:"type:varchar(255)"`
+	Price         float64        `json:"price"  gorm:"float"`
+	Sale          int            `json:"sale" gorm:"type:int"`
+	Quantity      int            `json:"qty" gorm:"type:int"`
+	Weight        float64        `json:"weight"  gorm:"float"`
 	Description   string         `json:"desc"`
 	CreatedAt     time.Time      `json:"createdAt"`
 	UpdatedAt     time.Time      `json:"updatedAt"`
-	IsRendered    bool           `json:"isRendered"`
-	BrandId       int            `json:"brandId"`
-	CategoryId    int            `json:"categoryId"`
-	ProductOrders []ProductOrder `json:"productOrders" gorm:"foreignKey:ProductId"`
+	IsRendered    bool           `json:"isRendered" gorm:"type:boolean"`
+	BrandId       int            `db:"brandId" gorm:"type:int"`
+	CategoryId    int            `db:"categoryId" gorm:"type:int"`
+	ProductOrders []ProductOrder `gorm:"foreignKey:ProductId"`
 }
-
 type Brand struct {
 	Id       int       `json:"id"`
-	Name     string    `json:"name"`
-	Products []Product `json:"products" gorm:"foreignKey:BrandId"`
+	Name     string    `json:"name" gorm:"type:string; size:50"`
+	Products []Product `gorm:"foreignKey:BrandId"`
 }
-
 type Order struct {
 	Id            int            `json:"id"`
-	Name          string         `json:"name"`
-	Phone         string         `json:"phone"`
-	Address       string         `json:"add"`
-	Email         string         `json:"email"`
-	Note          string         `json:"note"`
-	Total         float64        `json:"total"`
-	IsDone        bool           `json:"isDone"`
-	CreatedAt     time.Time      `json:"createdAt"`
-	UpdatedAt     time.Time      `json:"updatedAt"`
-	IsRendered    bool           `json:"isRendered"`
-	ProductOrders []ProductOrder `json:"productOrders" gorm:"foreignKey:OrderId"`
+	Name          string         `json:"name" gorm:"type:varchar(50)"`
+	Phone         string         `json:"phone" gorm:"type:varchar(11)"`
+	Address       string         `json:"add" gorm:"type:varchar(100)"`
+	Email         string         `json:"email" gorm:"type:varchar(50)"`
+	Note          string         `json:"note" gorm:"type:varchar(100)"`
+	Total         float64        `json:"total"  gorm:"type:float" `
+	IsDone        bool           `json:"isDone" gorm:"type:boolean"`
+	CreatedAt     time.Time      `json:"createdAt" db:"createdAt"`
+	UpdatedAt     time.Time      `json:"updatedAt" db:"updatedAt"`
+	IsRendered    bool           `json:"isRendered" gorm:"type:boolean"`
+	ProductOrders []ProductOrder `gorm:"foreignKey:OrderId"`
 }
-
 type ProductOrder struct {
 	Id        int `json:"id"`
-	ProductId int `json:"productId"`
-	OrderId   int `json:"orderId"`
+	ProductId int `gorm:"type:int"`
+	OrderId   int `gorm:"type:int"`
 }
-
 type Category struct {
-	Id       int       `json:"id"`
-	Name     string    `json:"name"`
-	Products []Product `json:"products" gorm:"foreignKey:CategoryId"`
+	Id       int       `json:"id" `
+	Name     string    `json:"name" gorm:"type:varchar(50)"`
+	Products []Product `gorm:"foreignKey:CategoryId"`
 }
-
 type User struct {
-	Id       int    `json:"id"`
-	Username string `json:"username"`
-	Password string `json:"pw"`
-	Email    string `json:"email"`
+	Id       int    `json:"id"  `
+	Username string `json:"username"  gorm:"type:varchar(50)"`
+	Password string `json:"pw"  gorm:"type:varchar(50)"`
+	Email    string `json:"email" gorm:"type:varchar(50)"`
 }
