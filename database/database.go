@@ -34,7 +34,7 @@ type Product struct {
 	UpdatedAt     time.Time      `json:"updatedAt"`
 	IsRendered    bool           `json:"isRendered" gorm:"type:boolean"`
 	BrandId       int            `json:"brandId" gorm:"type:int"`
-	CategoryId    int            `:"categoryId" gorm:"type:int"`
+	CategoryId    int            `json:"categoryId" gorm:"type:int"`
 	ProductOrders []ProductOrder `gorm:"foreignKey:ProductId"`
 }
 type Brand struct {
