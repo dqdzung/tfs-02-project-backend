@@ -22,7 +22,6 @@ func ConnectDB() (db *gorm.DB) {
 	return db
 }
 
-
 type Product struct {
 	Id            int            `json:"id" gorm:"int"`
 	Name          string         `json:"name" gorm:"type:varchar(255)"`
@@ -34,8 +33,8 @@ type Product struct {
 	CreatedAt     time.Time      `json:"createdAt"`
 	UpdatedAt     time.Time      `json:"updatedAt"`
 	IsRendered    bool           `json:"isRendered" gorm:"type:boolean"`
-	BrandId       int            `db:"brandId" gorm:"type:int"`
-	CategoryId    int            `db:"categoryId" gorm:"type:int"`
+	BrandId       int            `json:"brandId" gorm:"type:int"`
+	CategoryId    int            `:"categoryId" gorm:"type:int"`
 	ProductOrders []ProductOrder `gorm:"foreignKey:ProductId"`
 }
 type Brand struct {
@@ -52,8 +51,8 @@ type Order struct {
 	Note          string         `json:"note" gorm:"type:varchar(100)"`
 	Total         float64        `json:"total"  gorm:"type:float" `
 	IsDone        bool           `json:"isDone" gorm:"type:boolean"`
-	CreatedAt     time.Time      `json:"createdAt" db:"createdAt"`
-	UpdatedAt     time.Time      `json:"updatedAt" db:"updatedAt"`
+	CreatedAt     time.Time      `json:"createdAt"`
+	UpdatedAt     time.Time      `json:"updatedAt"`
 	IsRendered    bool           `json:"isRendered" gorm:"type:boolean"`
 	ProductOrders []ProductOrder `gorm:"foreignKey:OrderId"`
 }
