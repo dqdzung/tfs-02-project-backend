@@ -1,53 +1,93 @@
 package controller
 
 import (
+	"encoding/json"
 	"net/http"
+	"project-backend/database"
+	"strconv"
+
+	"github.com/gorilla/mux"
 )
 
-func GetAllProducts(w http.ResponseWriter, r *http.Request) {
+var db = database.ConnectDB()
+
+func GetAll(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	// var students = []database.Student{}
-	// results := db.Find(&students)
-	// json.NewEncoder(w).Encode(results.Value)
+	products := []database.Product{}
+
+	result := db.Find(&products)
+
+	if result.Error != nil {
+		res := map[string]interface{}{
+			"success": 0,
+			"message": result.Error,
+		}
+		json.NewEncoder(w).Encode(res)
+		return
+	}
+
+	res := map[string]interface{}{
+		"success": 1,
+		"data":    &products,
+	}
+	json.NewEncoder(w).Encode(res)
 }
 
-func GetOneProduct(w http.ResponseWriter, r *http.Request) {
+func GetOne(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	// vars := mux.Vars(r)
-	// id, _ := strconv.Atoi(vars["id"])
+	vars := mux.Vars(r)
+	id, _ := strconv.Atoi(vars["id"])
 
-	// student := database.Student{}
-	// result := db.First(&student, id)
+	product := database.Product{}
+	result := db.First(&product, id)
 
-	// if result.Error != nil {
-	// 	fmt.Fprintf(w, "No entry at id %v", id)
-	// 	return
-	// }
-
-	// json.NewEncoder(w).Encode(result.Value)
+	if result.Error != nil {
+		res := map[string]interface{}{
+			"success": 0,
+			"message": result.Error,
+		}
+		json.NewEncoder(w).Encode(res)
+		return
+	}
+	res := map[string]interface{}{
+		"success": 1,
+		"data":    &product,
+	}
+	json.NewEncoder(w).Encode(res)
 }
 
-func AddProduct(w http.ResponseWriter, r *http.Request) {
+func Add(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+	newProduct := database.Product{}
 
-	// newStudent := database.Student{}
+	if err := json.NewDecoder(r.Body).Decode(&newProduct); err != nil {
+		res := map[string]interface{}{
+			"success": 0,
+			"message": err,
+		}
+		json.NewEncoder(w).Encode(res)
+		return
+	}
 
-	// if err := json.NewDecoder(r.Body).Decode(&newStudent); err != nil {
-	// 	fmt.Fprintf(w, "error when parsing body %v", err)
-	// 	return
-	// }
+	if result := db.Create(&newProduct); result.Error != nil {
+		res := map[string]interface{}{
+			"success": 1,
+			"message": result.Error,
+		}
+		json.NewEncoder(w).Encode(res)
+		return
+	}
 
-	// if result := db.Create(&newStudent); result.Error != nil {
-	// 	fmt.Fprintf(w, "Couldn't add %v. Error: %v", newStudent, result.Error)
-	// 	return
-	// }
-
-	// fmt.Fprintf(w, "Added %v", newStudent)
+	res := map[string]interface{}{
+		"success": 1,
+		"data":    &newProduct,
+	}
+	json.NewEncoder(w).Encode(res)
 }
 
-func UpdateProduct(w http.ResponseWriter, r *http.Request) {
+func UpdateOne(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	// vars := mux.Vars(r)
@@ -70,7 +110,7 @@ func UpdateProduct(w http.ResponseWriter, r *http.Request) {
 	// fmt.Fprintf(w, "Updated id %v to %v", id, student)
 }
 
-func DeleteProduct(w http.ResponseWriter, r *http.Request) {
+func DeleteOne(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	// vars := mux.Vars(r)

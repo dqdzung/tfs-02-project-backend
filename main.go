@@ -1,16 +1,10 @@
 package main
 
 import (
-	"fmt"
-	"project-backend/database"
+	"project-backend/server"
 )
 
 func main() {
-	db := database.ConnectDB()
-
-	db.Debug().Migrator().DropTable(&database.User{}, &database.Category{}, &database.Brand{}, &database.Product{}, &database.Order{}, &database.ProductOrder{})
-
-	db.AutoMigrate(&database.User{}, &database.Category{}, &database.Brand{}, &database.Product{}, &database.Order{}, &database.ProductOrder{})
-
-	fmt.Println("Done...")
+	// database.CreateTable()
+	server.RunServer()
 }
