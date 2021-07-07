@@ -23,11 +23,11 @@ func ConnectDB() (db *gorm.DB) {
 }
 
 func CreateTable() {
-	db := ConnectDB()
+	// db := ConnectDB()
 
-	db.Debug().Migrator().DropTable(&User{}, &Category{}, &Brand{}, &Product{}, &Order{}, &ProductOrder{})
+	// db.Debug().Migrator().DropTable(&User{}, &Category{}, &Brand{}, &Product{}, &Order{}, &ProductOrder{})
 
-	db.AutoMigrate(&User{}, &Category{}, &Brand{}, &Product{}, &Order{}, &ProductOrder{})
+	// db.AutoMigrate(&User{}, &Category{}, &Brand{}, &Product{}, &Order{}, &ProductOrder{})
 
 	fmt.Println("Done...")
 }
