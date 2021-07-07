@@ -48,7 +48,6 @@ type Category struct {
 }
 type User struct {
 	Id       int    `json:"id"  `
-	Username string `json:"username"  gorm:"type:varchar(50)"`
-	Password string `json:"pw"  gorm:"type:varchar(50)"`
+	Password string `json:"password"  gorm:"type:varchar(100)"`
 	Email    string `json:"email" gorm:"type:varchar(50)"`
 }
