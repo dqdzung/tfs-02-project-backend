@@ -1,9 +1,10 @@
-package controller
+package product
 
 import (
 	"encoding/json"
 	"net/http"
 	"project-backend/database"
+	"project-backend/model"
 	"strconv"
 
 	"github.com/gorilla/mux"
@@ -14,7 +15,7 @@ var db = database.ConnectDB()
 func GetAll(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	products := []database.Product{}
+	products := []model.Product{}
 
 	result := db.Find(&products)
 
@@ -40,7 +41,7 @@ func GetOne(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, _ := strconv.Atoi(vars["id"])
 
-	product := database.Product{}
+	product := model.Product{}
 	result := db.First(&product, id)
 
 	if result.Error != nil {
@@ -60,7 +61,7 @@ func GetOne(w http.ResponseWriter, r *http.Request) {
 
 func Add(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	newProduct := database.Product{}
+	newProduct := model.Product{}
 
 	if err := json.NewDecoder(r.Body).Decode(&newProduct); err != nil {
 		res := map[string]interface{}{

@@ -1,11 +1,12 @@
-package auth
+package token
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"time"
 
-	jwt "github.com/dgrijalva/jwt-go"
+	jwt "github.com/golang-jwt/jwt"
 )
 
 var jwtKey = []byte("my_secret_key")
@@ -35,4 +36,24 @@ func CreateToken(w http.ResponseWriter, email string) (string, error) {
 	}
 
 	return tokenString, nil
+}
+
+func VerifyToken(tokenString string) (interface{}, error) {
+	token, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {
+		return []byte(jwtKey), nil
+	})
+	if err != nil {
+		fmt.Println("error: ", err)
+	}
+	claims, ok := token.Claims.(*Claims)
+	if !ok {
+		return nil, errors.New("couldn't parse claims")
+	}
+	if claims.ExpiresAt < time.Now().UTC().Unix() {
+		return nil, errors.New("jwt is expired")
+	}
+	if !token.Valid {
+		return nil, errors.New("invalid token")
+	}
+	return claims, nil
 }

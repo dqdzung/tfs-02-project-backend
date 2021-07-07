@@ -1,10 +1,11 @@
-package controller
+package auth
 
 import (
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"project-backend/database"
+	"project-backend/model"
 	bcrypt "project-backend/util/bcrypt"
 	jwt "project-backend/util/jwt"
 	response "project-backend/util/response"
@@ -15,6 +16,7 @@ const (
 	UserExist     = "User already exists"
 	NewUser       = "New user added"
 	NoUser        = "User doesn't exist"
+	UserNotActive = "Account has been deactivated"
 	WrongPassword = "Wrong password"
 	LoginSuccess  = "Logged in"
 	TokenErr      = "Error generating token"
@@ -23,14 +25,14 @@ const (
 var db = database.ConnectDB()
 
 func SignUp(w http.ResponseWriter, r *http.Request) {
-	newUser := database.User{}
+	newUser := model.User{}
 
 	if err := json.NewDecoder(r.Body).Decode(&newUser); err != nil {
 		response.RespondWithJSON(w, 400, 0, ParsingError, nil)
 		return
 	}
 
-	result := db.First(&database.User{}, "email = ?", newUser.Email)
+	result := db.First(&model.User{}, "email = ?", newUser.Email)
 
 	if result.RowsAffected != 0 {
 		response.RespondWithJSON(w, 400, 0, UserExist, nil)
@@ -43,6 +45,7 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("error hasing password", err)
 	}
 
+	newUser.Active = 2
 	newUser.Password = hashPassword
 
 	if result := db.Create(&newUser); result.Error != nil {
@@ -53,8 +56,8 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 }
 
 func Login(w http.ResponseWriter, r *http.Request) {
-	credentials := database.User{} //hold user login credentials from request body
-	user := database.User{}        // hold user data from db
+	credentials := model.User{} //hold user login credentials from request body
+	user := model.User{}        // hold user data from db
 
 	// Get login data from request
 	if err := json.NewDecoder(r.Body).Decode(&credentials); err != nil {
@@ -66,6 +69,12 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	result := db.Where("email = ?", credentials.Email).First(&user)
 	if result.Error != nil {
 		response.RespondWithJSON(w, 400, 0, NoUser, nil)
+		return
+	}
+
+	// Check if account is active
+	if user.Active != 2 {
+		response.RespondWithJSON(w, 400, 0, UserNotActive, nil)
 		return
 	}
 
