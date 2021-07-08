@@ -5,6 +5,5 @@ import (
 )
 
 func main() {
-	// database.CreateTable()
 	server.RunServer()
 }

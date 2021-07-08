@@ -1,7 +1,6 @@
 package database
 
 import (
-	"fmt"
 	"log"
 
 	"gorm.io/driver/mysql"
@@ -20,14 +19,4 @@ func ConnectDB() (db *gorm.DB) {
 		log.Fatal("error when auto migrate table ", err)
 	}
 	return db
-}
-
-func CreateTable() {
-	// db := ConnectDB()
-
-	// db.Debug().Migrator().DropTable(&User{}, &Category{}, &Brand{}, &Product{}, &Order{}, &ProductOrder{})
-
-	// db.AutoMigrate(&User{}, &Category{}, &Brand{}, &Product{}, &Order{}, &ProductOrder{})
-
-	fmt.Println("Done...")
 }

@@ -1,10 +1,10 @@
-package controller
+package product
 
 import (
 	"encoding/json"
 	"net/http"
 	"project-backend/database"
-	"project-backend/database/model"
+	"project-backend/model"
 	"strconv"
 
 	"github.com/gorilla/mux"
