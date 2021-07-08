@@ -46,13 +46,9 @@ func VerifyToken(tokenString string) (*Claims, error) {
 	if err != nil {
 		fmt.Println("error: ", err)
 	}
-	if !token.Valid {
-		return nil, errors.New("invalid token")
-	}
-
 	claims, ok := token.Claims.(*Claims)
 	if !ok {
-		return nil, errors.New("couldn't parse claims")
+		return nil, errors.New("invalid token")
 	}
 	if claims.ExpiresAt < time.Now().UTC().Unix() {
 		return nil, errors.New("expired token")
