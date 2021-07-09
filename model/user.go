@@ -4,9 +4,10 @@ import "time"
 
 type User struct {
 	Id       int    `json:"id"  `
-	Email    string `json:"email"`    // length 50
+	Email    string `json:"email"`   // length 50
 	Password string `json:"password"` // length 255
-	Name     string `json:"name"`     // length 50
+	Name     string `json:"name"`    // length 50
+
 	Phone    string `json:"phone"`
 	Address  string `json:"address"`
 

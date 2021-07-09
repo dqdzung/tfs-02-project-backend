@@ -1,152 +1,119 @@
 package controller
 
 import (
-	"encoding/json"
+	"math"
 	"net/http"
 	"project-backend/database"
-	"project-backend/model"
-	"strconv"
 
-	"github.com/gorilla/mux"
+	response "project-backend/product/response"
+	resultResponse "project-backend/util/response"
+
+	"strconv"
+	"strings"
 )
 
 var db = database.ConnectDB()
 
-func GetAll(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+const (
+	DEFAULT_PAGE_SIZE  = 10
+	DEFAULT_PAGE_INDEX = 1
+	DEFAULT_SORT_TITLE = "id"
+	DEFAULT_SORT_BY    = "asc"
+)
 
-	products := []model.Product{}
+func SearchProduct(w http.ResponseWriter, r *http.Request) {
+//  input/: param:
+	// pageindex: default: 1
+	// name: product(like) // defaullt: ""
+	// fillter: 
+	//brand
+	//category // default: all
+	// sort title : price | created time  // default: id
+	// sort by: asc | desc	// default: asc
+	//---------------------------------------------
 
-	result := db.Find(&products)
+	// lấy param
+	nameProduct := r.URL.Query().Get("name") // nameProduct theo tên product
+	brand := r.URL.Query().Get("brand")
+	category := r.URL.Query().Get("category")
+	sortTitle := r.URL.Query().Get("sort")
+	orderBy := r.URL.Query().Get("order")
+	rawPageIndex := r.URL.Query().Get("page")
+	rawLimit := r.URL.Query().Get("limit")
 
-	if result.Error != nil {
-		res := map[string]interface{}{
-			"success": 0,
-			"message": result.Error,
-		}
-		json.NewEncoder(w).Encode(res)
+	// check param: số, ký tự đặc biệt
+	nameProduct = strings.Replace(nameProduct, "%", "", -1)
+	nameProduct = strings.Replace(nameProduct, "-", "", -1)
+
+	pageIndex, err := strconv.Atoi(rawPageIndex)
+	if err != nil {
+		pageIndex = DEFAULT_PAGE_INDEX
+	}
+
+	// query sql
+	sql := "active = 2 AND products.name LIKE '%" + nameProduct + "%' "
+	if brand != "" {
+		sql += "AND products.brand_name = '" + brand + "' "
+	}
+	if category != "" {
+		sql += "AND products.category_id = (SELECT id FROM categories WHERE categories.name = '" + category + "') "
+	}
+	switch sortTitle {
+		case "price":
+		case "date":
+			sortTitle = "created_at"
+		default:
+			sortTitle = DEFAULT_SORT_TITLE
+	}
+	if orderBy != "asc" && orderBy != "desc" {
+		orderBy = DEFAULT_SORT_BY
+	}
+	sql += "ORDER BY " + sortTitle + " " + orderBy + " "
+	limit, err := strconv.Atoi(rawLimit)
+	if err != nil {
+		limit = DEFAULT_PAGE_SIZE
+	}
+	if limit < 1 {
+		limit = DEFAULT_PAGE_SIZE
+	}
+	if pageIndex < 1 {
+		pageIndex = DEFAULT_PAGE_INDEX
+	}
+	// check page total
+	var totalElement int64
+	db.Raw("SELECT COUNT(*) FROM products WHERE " + sql).Scan(&totalElement)
+	if totalElement == 0 {
+		resultResponse.RespondWithJSON(w, 200, 1,"Not found",nil)
 		return
 	}
+	totalPage := int(math.Ceil(float64(totalElement) / float64(limit)))
 
-	res := map[string]interface{}{
-		"success": 1,
-		"data":    &products,
+	if pageIndex < 1 {
+		pageIndex = DEFAULT_PAGE_INDEX
 	}
-	json.NewEncoder(w).Encode(res)
-}
-
-func GetOne(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-
-	vars := mux.Vars(r)
-	id, _ := strconv.Atoi(vars["id"])
-
-	product := model.Product{}
-	result := db.First(&product, id)
-
-	if result.Error != nil {
-		res := map[string]interface{}{
-			"success": 0,
-			"message": result.Error,
-		}
-		json.NewEncoder(w).Encode(res)
-		return
+	if pageIndex > totalPage {
+		pageIndex = totalPage
 	}
-	res := map[string]interface{}{
-		"success": 1,
-		"data":    &product,
+// sql thu được
+		//	SELECT id, name, image_url price,original_price,quantity FROM products WHERE active = 2
+		//	products.name LIKE '% %' AND
+		//	products.brand_name = '' AND
+		//	products.category_id = (SELECT id FROM categories WHERE categories.name = 'dog')
+		//	ORDER BY produc ASC
+		//	LIMIT 0,10
+	sql = "SELECT * FROM products WHERE " + sql + " LIMIT " + strconv.Itoa((pageIndex-1)*limit) + " , " + strconv.Itoa(limit)
+	// Lấy data từ dât
+	var products []response.Product
+	db.Raw(sql).Scan(&products)
+
+	res := response.ResponseSearch{
+		TotalPage: totalPage,
+		TotalElement: int(totalElement),
+		PageIndex: pageIndex,
+		PageSize: limit,
+		Products: products,
 	}
-	json.NewEncoder(w).Encode(res)
+	resultResponse.RespondWithJSON(w, 200, 1,"",res)
+
 }
 
-func Add(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	newProduct := model.Product{}
-
-	if err := json.NewDecoder(r.Body).Decode(&newProduct); err != nil {
-		res := map[string]interface{}{
-			"success": 0,
-			"message": err,
-		}
-		json.NewEncoder(w).Encode(res)
-		return
-	}
-
-	if result := db.Create(&newProduct); result.Error != nil {
-		res := map[string]interface{}{
-			"success": 1,
-			"message": result.Error,
-		}
-		json.NewEncoder(w).Encode(res)
-		return
-	}
-
-	res := map[string]interface{}{
-		"success": 1,
-		"data":    &newProduct,
-	}
-	json.NewEncoder(w).Encode(res)
-}
-
-func UpdateOne(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-
-	// vars := mux.Vars(r)
-	// id, _ := strconv.Atoi(vars["id"])
-
-	// student := database.Student{}
-	// result := db.First(&student, id)
-	// if result.Error != nil {
-	// 	fmt.Fprintf(w, "No entry at id %v", id)
-	// 	return
-	// }
-
-	// if err := json.NewDecoder(r.Body).Decode(&student); err != nil {
-	// 	fmt.Fprintf(w, "error when parsing body %v", err)
-	// 	return
-	// }
-
-	// db.Save(&student)
-
-	// fmt.Fprintf(w, "Updated id %v to %v", id, student)
-}
-
-func DeleteOne(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-
-	// vars := mux.Vars(r)
-	// id, _ := strconv.Atoi(vars["id"])
-
-	// student := database.Student{}
-	// result := db.Delete(&student, id)
-	// if result.Error != nil {
-	// 	fmt.Fprintf(w, "No entry at id %v", id)
-	// 	return
-	// }
-	// fmt.Fprintf(w, "Deleted id %v", id)
-}
-
-// GET ALL
-func GetAllOrders(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-}
-
-// POST ONE
-func AddOrder(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-}
-
-// GET ONE
-func GetOrder(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-}
-
-// PUT ONE
-func UpdateOrder(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-}
-
-// DELETE ONE
-func DeleteOrder(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-}
