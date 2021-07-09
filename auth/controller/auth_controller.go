@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"project-backend/database"
-	"project-backend/database/model"
+	model2 "project-backend/model"
 
 	bcrypt "project-backend/util/bcrypt"
 	jwt "project-backend/util/jwt"
@@ -25,14 +25,14 @@ const (
 var db = database.ConnectDB()
 
 func SignUp(w http.ResponseWriter, r *http.Request) {
-	newUser := model.User{}
+	newUser := model2.User{}
 
 	if err := json.NewDecoder(r.Body).Decode(&newUser); err != nil {
 		response.RespondWithJSON(w, 400, 0, ParsingError, nil)
 		return
 	}
 
-	result := db.First(&model.User{}, "email = ?", newUser.Email)
+	result := db.First(&model2.User{}, "email = ?", newUser.Email)
 
 	if result.RowsAffected != 0 {
 		response.RespondWithJSON(w, 400, 0, UserExist, nil)
@@ -55,8 +55,8 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 }
 
 func Login(w http.ResponseWriter, r *http.Request) {
-	credentials := model.User{} //hold user login credentials from request body
-	user := model.User{}        // hold user data from db
+	credentials := model2.User{} //hold user login credentials from request body
+	user := model2.User{}        // hold user data from db
 
 	// Get login data from request
 	if err := json.NewDecoder(r.Body).Decode(&credentials); err != nil {
