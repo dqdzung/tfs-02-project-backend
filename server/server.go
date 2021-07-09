@@ -11,7 +11,6 @@ import (
 )
 
 func RunServer() {
-	fmt.Println("Server opened at port 8080...")
 	defer fmt.Println("Server stopped!")
 
 	router := mux.NewRouter().StrictSlash(true).PathPrefix("/api").Subrouter()
@@ -31,8 +30,9 @@ func RunServer() {
 	// router.Methods("GET").Path("/orders/{id:[0-9]+}").HandlerFunc(controller.GetOrder)
 	// router.Methods("PUT").Path("/orders/{id:[0-9]+}").HandlerFunc(controller.UpdateOrder)
 	// router.Methods("DELETE").Path("/orders/{id:[0-9]+}").HandlerFunc(controller.DeleteOrder)
+	fmt.Println("Server opened at port 8081")
 
-	err := http.ListenAndServe(":8080", handler)
+	err := http.ListenAndServe(":8081", handler)
 	if err != nil {
 		panic(err)
 	}

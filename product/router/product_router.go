@@ -1,4 +1,4 @@
-package product
+package router
 
 import (
 	product "project-backend/product/controller"
