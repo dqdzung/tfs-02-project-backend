@@ -21,7 +21,9 @@ type Order struct {
 	MailDeliveryStatus int    `json:"mail_delivery_status"`
 	UserId             int    `json:"user_id"`
 
-	Active    int       `json: "active"`
+
+	Active    int       `json:"active"`
+
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 	DeletedAt time.Time `json:"deleted_at"`

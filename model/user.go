@@ -7,6 +7,7 @@ type User struct {
 	Email    string `json:"email"`   // length 50
 	Password string `json:"password"` // length 255
 	Name     string `json:"name"`    // length 50
+
 	Phone    string `json:"phone"`
 	Address  string `json:"address"`
 
