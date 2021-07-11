@@ -1,7 +1,7 @@
 package router
 
 import (
-	product "project-backend/product/controller"
+	 "project-backend/product/controller"
 
 	"github.com/gorilla/mux"
 )

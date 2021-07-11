@@ -27,7 +27,7 @@ const (
 var db = database.ConnectDB()
 
 func SignUp(w http.ResponseWriter, r *http.Request) {
-	newUser := model2.User{}
+	newUser := model.User{}
 
 	if err := json.NewDecoder(r.Body).Decode(&newUser); err != nil {
 		response.RespondWithJSON(w, 400, 0, err.Error(), nil)
@@ -82,8 +82,8 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 }
 
 func Login(w http.ResponseWriter, r *http.Request) {
-	credentials := model2.User{} //hold user login credentials from request body
-	user := model2.User{}        // hold user data from db
+	credentials := model.User{} //hold user login credentials from request body
+	user := model.User{}        // hold user data from db
 
 	// Get login data from request
 	if err := json.NewDecoder(r.Body).Decode(&credentials); err != nil {
