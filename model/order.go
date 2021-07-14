@@ -6,18 +6,18 @@ import (
 )
 
 type Order struct {
-	Id          int64   `json:"id"`
-	Code        string  `json:"code"`
-	Name        string  `json:"name"`
-	Phone       string  `json:"phone"`
-	Address     string  `json:"add"`
-	Email       string  `json:"email"`
-	Note        string  `json:"note"`
-	Total       float64 `json:"total"`
+	Id             int64   `json:"id"`
+	Code           string  `json:"code"`
+	Name           string  `json:"name"`
+	Phone          string  `json:"phone"`
+	Address        string  `json:"add"`
+	Email          string  `json:"email"`
+	Note           string  `json:"note"`
+	Total          float64 `json:"total"`
 	DiscountAmount float64 `json:"discount_amount"`
-	TotalBill   float64 `json:"total_bill"`
-	TotalWeight string  `json:"total_weight"`
-	Shipping    float64 `json:"shipping"`
+	TotalBill      float64 `json:"total_bill"`
+	TotalWeight    string  `json:"total_weight"`
+	Shipping       float64 `json:"shipping"`
 
 	VoucherCode        string `json:"voucher_code"`
 	PaymentMethod      string `json:"payment_method"`
@@ -33,7 +33,7 @@ type Order struct {
 	DeletedAt time.Time `json:"deleted_at"`
 }
 
-func (o *Order) MapFromCreateOrder(r *request.RequestCreateOrder, UserId int64) {
+func (o *Order) MapFromCreateOrder(r *request.RequestCreateOrder, userId int64) {
 	o.Code = time.Now().String()
 	o.Name = r.Name
 	o.Phone = r.Phone
@@ -47,7 +47,7 @@ func (o *Order) MapFromCreateOrder(r *request.RequestCreateOrder, UserId int64) 
 	o.VoucherCode = r.VoucherCode
 	o.PaymentMethod = r.PaymentMethod
 	o.MailDeliveryStatus = 0
-	o.UserId = UserId
+	o.UserId = userId
 	o.Active = 1 // dat thanh cong, chua dc xu ly
 	o.CreatedAt = time.Now()
 	//o.OrderDetail = make([]OrderDetail, len(r.Carts))

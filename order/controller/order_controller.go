@@ -32,8 +32,11 @@ func CreateOrder(w http.ResponseWriter, r *http.Request) {
 
 	// response.RespondWithJSON(w, 200, 1, "", user)
 	//2. Valid voucher code
+	discount := 0.0
+	unit := "usd"
+	maxSaleAmount := 0.0
 	voucher := model.Voucher{}
-
+	
 	if requestOrder.VoucherCode != "" {
 		err = voucher.GetVoucherByCode(requestOrder.VoucherCode)
 		if err != nil {
@@ -42,7 +45,12 @@ func CreateOrder(w http.ResponseWriter, r *http.Request) {
 		}
 		if !time.Now().Before(voucher.TimeEnd) {
 			response.RespondWithJSON(w, 400, 0, "Voucher expired", nil)
+			return
 		}
+		discount = voucher.Discount
+		unit = voucher.Unit
+		maxSaleAmount = voucher.MaxSaleAmount
+
 	}
 	// valid request
 	err = requestOrder.ValidRequestCreateOrder()
@@ -50,8 +58,14 @@ func CreateOrder(w http.ResponseWriter, r *http.Request) {
 		response.RespondWithJSON(w, 400, 0, err.Error(), nil)
 		return
 	}
+	// check discountAmount
+	err = requestOrder.CheckDiscountAmount(discount,unit,maxSaleAmount)
+	if err != nil {
+		response.RespondWithJSON(w, 400, 0, err.Error(), nil)
+		return
+	}
 	// check total
-	err = requestOrder.CheckTotal(voucher)
+	err = requestOrder.CheckTotal()
 	if err != nil {
 		response.RespondWithJSON(w, 400, 0, err.Error(), nil)
 		return

@@ -2,26 +2,25 @@ package request
 
 import (
 	"errors"
-	"project-backend/model"
 	"project-backend/util/validator"
 	"strconv"
 )
 
 type RequestCreateOrder struct {
 	// Code
-	Name          string  `json:"name"`
-	Phone         string  `json:"phone"`
-	Address       string  `json:"address"`
-	Email         string  `json:"email"`
-	Note          string  `json:"note"`
-	Total         float64 `json:"total"`
+	Name           string  `json:"name"`
+	Phone          string  `json:"phone"`
+	Address        string  `json:"address"`
+	Email          string  `json:"email"`
+	Note           string  `json:"note"`
+	Total          float64 `json:"total"`
 	DiscountAmount float64 `json:"discount_amount"`
-	Shipping      float64 `json:"shipping"`
-	TotalBill     float64 `json:"total_bill"`
-	TotalWeight   string  `json:"total_weight"`
-	VoucherCode   string  `json:"voucher_code"`
-	PaymentMethod string  `json:"payment_method"`
-	Carts         []Item  `json:"carts"`
+	Shipping       float64 `json:"shipping"`
+	TotalBill      float64 `json:"total_bill"`
+	TotalWeight    string  `json:"total_weight"`
+	VoucherCode    string  `json:"voucher_code"`
+	PaymentMethod  string  `json:"payment_method"`
+	Carts          []Item  `json:"carts"`
 }
 type Item struct { // variant
 	Id            int64   `json:"id"`
@@ -34,23 +33,29 @@ type Item struct { // variant
 	ProductId     int64   `json:"product_id"`
 }
 
-func (c RequestCreateOrder) CheckTotal(v model.Voucher) error {
+func (c RequestCreateOrder) CheckTotal() error {
 	//discount := v.Discount
 	//uint := v.Unit
 	//maxSaleAmount := v.MaxSaleAmount
+	if c.Total < 0 {
+		return errors.New("invalid total")
+	}
+	if c.Shipping < 0 {
+		return errors.New("invalid shipping")
+	}
+	if c.DiscountAmount < 0 {
+		return errors.New("invalid discount amount")
+	}
+	if c.TotalBill < 0 {
+		return errors.New("invalid total bill")
+	}
 
 	total := 0.0
-	totalBill := c.Shipping
+	totalBill := c.Shipping - c.DiscountAmount
 	for _, item := range c.Carts {
 		total += float64(item.Quantity) * item.Price
 	}
-	//switch uint {
-	//case "percent":
-	//
-	//case "usd":
-	//default:
-	//
-	//}
+
 	totalBill += total
 	if total != c.Total {
 		return errors.New("invalid total ")
@@ -58,6 +63,25 @@ func (c RequestCreateOrder) CheckTotal(v model.Voucher) error {
 	}
 	if totalBill != c.TotalBill {
 		return errors.New("invalid total bill ")
+	}
+	return nil
+}
+func (c RequestCreateOrder) CheckDiscountAmount(discount float64, unit string, maxSaleAmount float64) error {
+	discountAmount := 0.0
+	switch unit {
+	case "percent":
+		discountAmount = c.Total * discount / 100
+		if discountAmount > maxSaleAmount {
+			discountAmount = maxSaleAmount
+		}
+		if discountAmount != c.DiscountAmount {
+			return errors.New("invalid discount amount")
+		}
+		return nil
+	default:
+		if discount != c.DiscountAmount {
+			return errors.New("invalid discount amount")
+		}
 	}
 	return nil
 }
@@ -80,9 +104,6 @@ func (c RequestCreateOrder) ValidRequestCreateOrder() error {
 	}
 	if !validator.CheckLength(c.Note, 255) {
 		return errors.New("invalid note ")
-	}
-	if c.Total < 0 || c.Shipping < 0 || c.TotalBill < 0 {
-		return errors.New("invalid calculate total ")
 	}
 
 	//Check payment method?
