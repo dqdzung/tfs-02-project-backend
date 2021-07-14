@@ -61,14 +61,7 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// Encrypt password before saving to db (will be moved to frontend later)
-	hashPassword, err := bcrypt.HashPassword(newUser.Password)
-	if err != nil {
-		fmt.Println("error hasing password", err)
-	}
-
 	newUser.Active = 2
-	newUser.Password = hashPassword
 
 	if result := db.Create(&newUser); result.Error != nil {
 		response.RespondWithJSON(w, 400, 0, result.Error.Error(), nil)
