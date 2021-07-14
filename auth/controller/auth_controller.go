@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"net/http"
 	"project-backend/database"
+
 	"project-backend/model"
+
 	bcrypt "project-backend/util/bcrypt"
 	jwt "project-backend/util/jwt"
 	response "project-backend/util/response"
@@ -32,8 +34,10 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+
 	foundUser := model.User{}
 	result := db.First(&foundUser, "email = ?", newUser.Email)
+
 
 	if result.RowsAffected != 0 {
 		switch foundUser.Active {

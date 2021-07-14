@@ -1,3 +1,4 @@
+
 package database
 
 import (
@@ -8,7 +9,8 @@ import (
 )
 
 func ConnectDB() (db *gorm.DB) {
-	dsn := "root:admin@/project?charset=utf8&parseTime=True&loc=Local"
+	dsn:= "root:@/shoppet?charset=utf8&parseTime=True&loc=Local"
+	// dsn := "root:admin@/project?charset=utf8&parseTime=True&loc=Local"
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatal("error when connect to db ", err)
