@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	auth "project-backend/auth/router"
+	order "project-backend/order/router"
 	product "project-backend/product/router"
 
 	"github.com/gorilla/mux"
@@ -23,7 +24,7 @@ func RunServer() {
 
 	auth.AuthRouter(router)
 	product.ProductRouter(router)
-
+	order.OrderRouter(router)
 	//Orders
 	// router.Methods("GET").Path("/orders").HandlerFunc(controller.GetAllOrders)
 	// router.Methods("POST").Path("/orders").HandlerFunc(controller.AddOrder)
