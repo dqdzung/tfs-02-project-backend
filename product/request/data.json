@@ -1,0 +1,81 @@
+[
+    {
+        "name" : "",
+        "image_url": "",
+        "price": 10.5,
+        "original_price": 11,
+        "quantity": 100,
+        "brand_id": 1,
+        "brand_name": "",
+        "category_id": 2,
+        "active": 2,
+        "options": [
+            {
+                "name":"weight",
+                "position": 1,
+                "option_value":[
+                    {
+                        "name": "2.5kg",
+                        "position": 1
+                    },
+                    {
+                        "name": "5kg",
+                        "position": 1
+                    },
+                    {
+                        "name": "7kg",
+                        "position": 1
+                    }
+                ]
+                
+            }
+        ],
+        "variants": [{
+            "name":"2.5kg",
+            "position": 1,
+            "price" : 10.5,
+            "original_price": 11,
+            "weight":"2.5kg",
+            "quantity":30,
+            "image":
+                {
+                    "url":"",
+                    "alt":"",
+                    "position": 1
+                }
+        }, 
+        {
+            "name":"5kg",
+            "position": 2,
+            "price" : 11,
+            "original_price": 12,
+            "weight":"5kg",
+            "quantity":30
+        },
+        {
+            "name":"7kg",
+            "position": 12.5,
+            "price" : 8,
+            "original_price": 13,
+            "weight":"7kg",
+            "quantity":40
+        }],
+        "image": [
+            {
+                "url":"https://images-na.ssl-images-amazon.com/images/I/8195Sg1skcL._AC_SL1500_.jpg",
+                "alt":"1",
+                "position": 1
+            },
+            {
+                "url":"https://images-na.ssl-images-amazon.com/images/I/81ZmYKTOdXL._AC_SL1500_.jpg",
+                "alt":"1",
+                "position": 2
+            },
+            {
+                "url":"https://images-na.ssl-images-amazon.com/images/I/8186QjTMdxL._AC_SL1500_.jpg",
+                "alt":"1",
+                "position": 0
+            }
+        ]
+    }
+]
