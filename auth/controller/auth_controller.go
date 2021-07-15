@@ -71,6 +71,7 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 		response.RespondWithJSON(w, 400, 0, result.Error.Error(), nil)
 		return
 	}
+	newUser.Password = ""
 	response.RespondWithJSON(w, 200, 1, NewUser, &newUser)
 }
 

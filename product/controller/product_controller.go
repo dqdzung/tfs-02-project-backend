@@ -95,16 +95,18 @@ func CreateProduct(w http.ResponseWriter, r *http.Request) {
 	tx.Commit()
 	resultResponse.RespondWithJSON(w, 201, 1, "", requestCreateProduct)
 }
-func GetProductByID(w http.ResponseWriter, r *http.Request) {
+func GetProductByAlias(w http.ResponseWriter, r *http.Request) {
 	param := mux.Vars(r)
-	productId, err := strconv.Atoi(param["id"])
-	if err != nil {
-		resultResponse.RespondWithJSON(w, 400, 0, "Invalid param", "")
-		return
-	}
+	alias := param["alias"]
+	// productId, err := strconv.Atoi(param["id"])
+	// if err != nil {
+	// 	resultResponse.RespondWithJSON(w, 400, 0, "Invalid param", "")
+	// 	return
+	// }
+	
 	var result response.ResponseProductByID
-	sql := "SELECT * FROM products WHERE active = 2 AND  id = ?"
-	resultQuery := db.Raw(sql, productId).Scan(&result)
+	sql := "SELECT * FROM products WHERE active = 2 AND  alias = ?"
+	resultQuery := db.Raw(sql, alias).Scan(&result)
 	if resultQuery.RowsAffected < 1 {
 		resultResponse.RespondWithJSON(w, 404, 1, "Not found", "")
 		return
@@ -112,19 +114,20 @@ func GetProductByID(w http.ResponseWriter, r *http.Request) {
 
 	// get các options, option_value
 	var options []response.Option
-	db.Preload("OptionValues").Find(&options)
+	
+	db.Where("product_id =?",result.Id).Preload("OptionValues").Find(&options)
 	result.SetOptions(&options)
 
 	// get variants
 	var variants []response.Variant
 	sql = "SELECT * FROM `variants` WHERE product_id = ?"
-	db.Raw(sql, productId).Scan(&variants)
+	db.Raw(sql, result.Id).Scan(&variants)
 	result.SetVariants(&variants)
 
 	//get image
 	var images []response.Image
 	sql = "SELECT * FROM product_images WHERE product_id = ?"
-	db.Raw(sql, productId).Scan(&images)
+	db.Raw(sql, result.Id).Scan(&images)
 	result.SetImages(&images)
 
 	resultResponse.RespondWithJSON(w, 200, 1, "", result)

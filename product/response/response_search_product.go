@@ -11,6 +11,8 @@ type ResponseSearch struct{
 }
 type Product struct {
 	Id int `json:"id"`
+	Alias string `json:"alias"`
+
 	Name string `json:"name"`
 	Price float64 `json:"price"`
 	OriginalPrice float64 `json:"original_price"`
