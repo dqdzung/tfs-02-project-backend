@@ -1,13 +1,16 @@
 package controller
 
 import (
+	"encoding/json"
 	"math"
 	"net/http"
 	"project-backend/database"
+	"regexp"
+	"time"
 
+	"project-backend/product/request"
 	response "project-backend/product/response"
 	resultResponse "project-backend/util/response"
-
 	"strconv"
 	"strings"
 
@@ -23,6 +26,75 @@ const (
 	DEFAULT_SORT_BY    = "asc"
 )
 
+func convertStringToAlias(s string) string {
+	s = strings.ToLower(s)
+	s = strings.Trim(s," !@#$%^&*()")
+	s = strings.ReplaceAll(s, " ","-")
+	re := regexp.MustCompile("[^\\w- ]+")
+	s = re.ReplaceAllString(s, "")
+	s += string(time.Now().UnixNano() / int64(time.Millisecond))
+	return s
+}
+
+func CreateProduct(w http.ResponseWriter, r *http.Request) {
+	requestCreateProduct := request.Product{}
+	err := json.NewDecoder(r.Body).Decode(&requestCreateProduct)
+	if err != nil {
+		resultResponse.RespondWithJSON(w, 400, 0, " Hi Bad request", nil)
+		return
+	}
+	requestCreateProduct.Alias = convertStringToAlias(requestCreateProduct.Name)
+	tx := db.Begin()
+	err = tx.Omit("Variants", "Image").Create(&requestCreateProduct).Error
+	if err != nil {
+		tx.Rollback()
+		resultResponse.RespondWithJSON(w, 500, 0, err.Error(), nil)
+		return
+	}
+	//productId := requestCreateProduct.Id
+	//luu variant
+	// map[position_option][map[postion_op_value][id_op_value]]
+	options := make(map[int64]map[int64]int64)
+	for _, o := range requestCreateProduct.Options {
+		options[o.Position] = make(map[int64]int64)
+		for _, ov := range o.OptionValues {
+			options[o.Position][ov.Position] = ov.Id
+		}
+	}
+	// set id product, ip option cho variant
+	productId := requestCreateProduct.Id
+	for i, _ := range requestCreateProduct.Variants {
+		requestCreateProduct.Variants[i].ProductId = productId
+		requestCreateProduct.Variants[i].Option1 = options[1][requestCreateProduct.Variants[i].Option1]
+		requestCreateProduct.Variants[i].Option2 = options[2][requestCreateProduct.Variants[i].Option2]
+		requestCreateProduct.Variants[i].Option3 = options[3][requestCreateProduct.Variants[i].Option3]
+	}
+	err = tx.Create(&requestCreateProduct.Variants).Error
+	if err != nil {
+		tx.Rollback()
+		resultResponse.RespondWithJSON(w, 500, 0, err.Error(), nil)
+		return
+	}
+	// get id variant// map[positionVariants][variantId]
+	variantIds := make(map[int64]int64)
+	for _, v := range requestCreateProduct.Variants {
+		variantIds[v.Position] = v.Id
+	}
+	// luu image
+		//1. set id variant, product cho image
+	for i,_ := range requestCreateProduct.Image {
+		requestCreateProduct.Image[i].ProductId = productId
+		requestCreateProduct.Image[i].VariantId = variantIds[requestCreateProduct.Image[i].VariantId]
+	}
+	err = tx.Create(&requestCreateProduct.Image).Error
+	if err != nil {
+		tx.Rollback()
+		resultResponse.RespondWithJSON(w, 500, 0, err.Error(), nil)
+		return
+	}
+	tx.Commit()
+	resultResponse.RespondWithJSON(w, 201, 1, "", requestCreateProduct)
+}
 func GetProductByID(w http.ResponseWriter, r *http.Request) {
 	param := mux.Vars(r)
 	productId, err := strconv.Atoi(param["id"])
