@@ -10,8 +10,27 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/gorilla/mux"
 	"gorm.io/gorm"
 )
+
+func GetVoucherByCode(w http.ResponseWriter, r *http.Request) {
+	param := mux.Vars(r)
+	code := param["code"]
+	voucher := model.Voucher{}
+	err := voucher.GetByCode(code)
+	
+	if err != nil {
+		response.RespondWithJSON(w, 400, 0, "Voucher not exists", nil)
+		return
+	}
+	if !time.Now().Before(voucher.TimeEnd) {
+		response.RespondWithJSON(w, 400, 0, "Voucher expired", nil)
+		return
+	}
+	response.RespondWithJSON(w, 200, 1, "", voucher)
+
+}
 
 func CreateOrder(w http.ResponseWriter, r *http.Request) {
 	//1. Get user
@@ -36,22 +55,20 @@ func CreateOrder(w http.ResponseWriter, r *http.Request) {
 	unit := "usd"
 	maxSaleAmount := 0.0
 	voucher := model.Voucher{}
-	
-	if requestOrder.VoucherCode != "" {
-		err = voucher.GetVoucherByCode(requestOrder.VoucherCode)
-		if err != nil {
-			response.RespondWithJSON(w, 400, 0, "Voucher not exists", nil)
-			return
-		}
-		if !time.Now().Before(voucher.TimeEnd) {
-			response.RespondWithJSON(w, 400, 0, "Voucher expired", nil)
-			return
-		}
-		discount = voucher.Discount
-		unit = voucher.Unit
-		maxSaleAmount = voucher.MaxSaleAmount
 
+	err = voucher.GetByCode(requestOrder.VoucherCode)
+	if err != nil {
+		response.RespondWithJSON(w, 400, 0, "Voucher not exists", nil)
+		return
 	}
+	if !time.Now().Before(voucher.TimeEnd) {
+		response.RespondWithJSON(w, 400, 0, "Voucher expired", nil)
+		return
+	}
+	discount = voucher.Discount
+	unit = voucher.Unit
+	maxSaleAmount = voucher.MaxSaleAmount
+
 	// valid request
 	err = requestOrder.ValidRequestCreateOrder()
 	if err != nil {
@@ -59,7 +76,7 @@ func CreateOrder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// check discountAmount
-	err = requestOrder.CheckDiscountAmount(discount,unit,maxSaleAmount)
+	err = requestOrder.CheckDiscountAmount(discount, unit, maxSaleAmount)
 	if err != nil {
 		response.RespondWithJSON(w, 400, 0, err.Error(), nil)
 		return

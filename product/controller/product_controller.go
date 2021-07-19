@@ -2,6 +2,7 @@ package controller
 
 import (
 	"encoding/json"
+	"fmt"
 	"math"
 	"net/http"
 	"project-backend/database"
@@ -32,7 +33,7 @@ func convertStringToAlias(s string) string {
 	s = strings.ReplaceAll(s, " ","-")
 	re := regexp.MustCompile("[^\\w- ]+")
 	s = re.ReplaceAllString(s, "")
-	s += string(time.Now().UnixNano() / int64(time.Millisecond))
+	s += fmt.Sprint(time.Now().UnixNano() / int64(time.Millisecond))
 	return s
 }
 
@@ -82,7 +83,7 @@ func CreateProduct(w http.ResponseWriter, r *http.Request) {
 	}
 	// luu image
 		//1. set id variant, product cho image
-	for i,_ := range requestCreateProduct.Image {
+	for i, _ := range requestCreateProduct.Image {
 		requestCreateProduct.Image[i].ProductId = productId
 		requestCreateProduct.Image[i].VariantId = variantIds[requestCreateProduct.Image[i].VariantId]
 	}
@@ -139,8 +140,8 @@ func SearchProduct(w http.ResponseWriter, r *http.Request) {
 	// fillter:
 	//brand
 	//category // default: all
-	// sort title : price | created time  // default: id
-	// sort by: asc | desc	// default: asc
+	// sort: price | date  // default: id
+	// order: asc | desc	// default: asc
 	//---------------------------------------------
 
 	// lấy param
