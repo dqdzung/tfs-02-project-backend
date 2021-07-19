@@ -2,11 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4a579386-7a82-4a62-8faf-ed1b612c8170" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/product/request/data2cate.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_09_07_2021_2_04_CH_[Default_Changelist]/shelved.patch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_09_07_2021_2_04_CH__Default_Changelist_.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/product.go" beforeDir="false" afterPath="$PROJECT_DIR$/model/product.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/product/controller/product_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/product/controller/product_controller.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/product/request/data.json" beforeDir="false" afterPath="$PROJECT_DIR$/product/request/data.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/product/response/response_get_product_by_id.go" beforeDir="false" afterPath="$PROJECT_DIR$/product/response/response_get_product_by_id.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/product/response/response_search_product.go" beforeDir="false" afterPath="$PROJECT_DIR$/product/response/response_search_product.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -32,7 +33,7 @@
     <property name="go.import.settings.migrated" value="true" />
     <property name="go.sdk.automatically.set" value="true" />
     <property name="go.tried.to.enable.integration.vgo.integrator" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../worker" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />

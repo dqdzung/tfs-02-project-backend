@@ -1,6 +1,9 @@
 package model
 
-import "time"
+import (
+	"errors"
+	"time")
+
 
 type Voucher struct {
 	Id            int       `json:"id"`
@@ -14,6 +17,9 @@ type Voucher struct {
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
-func (v *Voucher) GetVoucherByCode(code string) error{
+func (v *Voucher) GetByCode(code string) error{
+	if code == "" {
+		return errors.New("Voucher not exists")
+	}
 	return 	db.Where("code = ?", code).Take(v).Error
 }
