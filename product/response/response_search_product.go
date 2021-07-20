@@ -4,7 +4,7 @@ import "time"
 
 type ResponseSearch struct{
 	TotalPage int `json:"total_page"`
-	TotalElement int `json:"total_elements;"`
+	TotalElement int `json:"total_elements"`
 	PageIndex 	int `json:"page_index"`
 	PageSize	int `json:"page_size"`
 	Products []Product `json:"products"`

@@ -1,8 +1,13 @@
-package request
+package response
 
-type RequestCheckCart struct {
+type ResponseCheckCart struct{
+	Name           string  `json:"name"`
+	Phone          string  `json:"phone"`
+	Address        string  `json:"address"`
+	Email          string  `json:"email"`
 	Total          float64 `json:"total"`
 	DiscountAmount float64 `json:"discount_amount"`
+	Shipping       float64 `json:"shipping"`
 	TotalBill      float64 `json:"total_bill"`
 	TotalWeight    string  `json:"total_weight"`
 	VoucherCode    string  `json:"voucher_code"`
@@ -27,9 +32,6 @@ type Variant struct {
 	OriginalPrice float64 `json:"original_price"`
 	Position      int64   `json:"position"`
 	Price         float64 `json:"price"`
+	Stock      int64   `json:"quantity"`
 	Weight        string  `json:"weight"`
-}
-
-func (i ItemCheckCart) checkItem()  {
-	
 }

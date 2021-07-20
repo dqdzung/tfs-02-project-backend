@@ -2,6 +2,7 @@ package controller
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 	"project-backend/database"
 	"project-backend/model"
@@ -14,6 +15,67 @@ import (
 	"gorm.io/gorm"
 )
 
+const (
+	ERROR_PRODUCT_CHANGED = "error_product_changed"
+
+)
+var db *gorm.DB
+
+func CheckCart(w http.ResponseWriter, r *http.Request)  {
+//	1 Get user
+	emailUser := r.Header.Get("email")
+	user := model.User{}
+	err := user.GetByEmail(emailUser)
+	if err != nil {
+		response.RespondWithJSON(w, 400, 0, "User not exists", nil)
+		return
+	}
+// 2. get request
+	requestCart := request.RequestCheckCart{}
+	err = json.NewDecoder(r.Body).Decode(&requestCart)
+	if err != nil {
+		response.RespondWithJSON(w, 400, 0, "Bad request", nil)
+		return
+	}
+// 3. Check voucher
+	discount := 0.0
+	unit := "usd"
+	maxSaleAmount := 0.0
+	if requestCart.VoucherCode != "" {
+		voucher := model.Voucher{}
+		err = voucher.GetByCode(requestCart.VoucherCode)
+		if err != nil {
+			response.RespondWithJSON(w, 400, 0, "Voucher not exists", nil)
+			return
+		}
+		if !time.Now().Before(voucher.TimeEnd) {
+			response.RespondWithJSON(w, 400, 0, "Voucher expired", nil)
+			return
+		}
+		discount = voucher.Discount
+		unit = voucher.Unit
+		maxSaleAmount = voucher.MaxSaleAmount
+	}
+// check variant
+	for _, item := range requestCart.Cart {
+		err = checkItem(&item)
+		if err != nil {
+			response.RespondWithJSON(w,400,0,err.Error(),item)
+			return
+		}
+	}
+// check total
+}
+func checkItem(item *request.ItemCheckCart) error{
+	//check price, quantity, variant exist?
+	sql := "SELECT quantity FROM variants WHERE id = ?  AND price = ? AND product_id = ?"
+	quantity := 0
+	db.Raw(sql, item.Variant.Id, item.Variant.Price, item.Id).Scan(&quantity)
+	if item.Quantity > int64(quantity) {
+		return errors.New(ERROR_PRODUCT_CHANGED)
+	}
+	return nil
+}
 func GetVoucherByCode(w http.ResponseWriter, r *http.Request) {
 	param := mux.Vars(r)
 	code := param["code"]
@@ -37,9 +99,10 @@ func CreateOrder(w http.ResponseWriter, r *http.Request) {
 	db := database.ConnectDB()
 	emailUser := r.Header.Get("email")
 	user := model.User{}
-	err := user.GetUserByEmail(emailUser)
+	err := user.GetByEmail(emailUser)
 	if err != nil {
 		response.RespondWithJSON(w, 400, 0, "User not exists", nil)
+		return
 	}
 	// get request order
 	requestOrder := request.RequestCreateOrder{}
@@ -88,11 +151,11 @@ func CreateOrder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// check price, weight request vs db
-	sql := "SELECT * FROM variants WHERE id = ?  AND price = ? AND weight = ? AND alias = ?"
+	sql := "SELECT * FROM variants WHERE id = ?  AND price = ? AND weight = ? AND product_id = ?"
 	var resutlQuery *gorm.DB
 	var variant model.Variant
 	for _, item := range requestOrder.Carts {
-		resutlQuery = db.Raw(sql, item.Id, item.Price, item.Weight, item.Alias).Take(&variant)
+		resutlQuery = db.Raw(sql, item.Id, item.Price, item.Weight, item.ProductId).Take(&variant)
 		if resutlQuery.RowsAffected < 1 {
 			response.RespondWithJSON(w, 400, 0, "Item "+strconv.Itoa(int(item.Id))+" not exists", nil)
 			return
