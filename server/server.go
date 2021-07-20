@@ -6,6 +6,7 @@ import (
 	auth "project-backend/auth/router"
 	order "project-backend/order/router"
 	product "project-backend/product/router"
+	brand "project-backend/brand/router"
 
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
@@ -25,6 +26,7 @@ func RunServer() {
 	auth.AuthRouter(router)
 	product.ProductRouter(router)
 	order.OrderRouter(router)
+	brand.OrderRouter(router)
 	//Orders
 	// router.Methods("GET").Path("/orders").HandlerFunc(controller.GetAllOrders)
 	// router.Methods("POST").Path("/orders").HandlerFunc(controller.AddOrder)
