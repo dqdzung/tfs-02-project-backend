@@ -88,11 +88,11 @@ func CreateOrder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// check price, weight request vs db
-	sql := "SELECT * FROM variants WHERE id = ?  AND price = ? AND weight = ? AND product_id = ?"
+	sql := "SELECT * FROM variants WHERE id = ?  AND price = ? AND weight = ? AND alias = ?"
 	var resutlQuery *gorm.DB
 	var variant model.Variant
 	for _, item := range requestOrder.Carts {
-		resutlQuery = db.Raw(sql, item.Id, item.Price, item.Weight, item.ProductId).Take(&variant)
+		resutlQuery = db.Raw(sql, item.Id, item.Price, item.Weight, item.Alias).Take(&variant)
 		if resutlQuery.RowsAffected < 1 {
 			response.RespondWithJSON(w, 400, 0, "Item "+strconv.Itoa(int(item.Id))+" not exists", nil)
 			return

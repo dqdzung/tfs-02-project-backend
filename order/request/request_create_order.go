@@ -30,7 +30,7 @@ type Item struct { // variant
 	OriginalPrice float64 `json:"original_price"`
 	Quantity      int64   `json:"quantity"`
 	Weight        string  `json:"weight"`
-	ProductId     int64   `json:"product_id"`
+	Alias     string   `json:"Alias"`
 }
 
 func (c RequestCreateOrder) CheckTotal() error {
