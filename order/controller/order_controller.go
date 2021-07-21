@@ -30,7 +30,7 @@ func CheckCart(w http.ResponseWriter, r *http.Request)  {
 //	}
 // 2. get request
 	requestCart := request.RequestCheckCart{}
-	err = json.NewDecoder(r.Body).Decode(&requestCart)
+	err := json.NewDecoder(r.Body).Decode(&requestCart)
 	if err != nil {
 		response.RespondWithJSON(w, 400, 0, message.ERROR_BAD_REQUEST, nil)
 		return
