@@ -7,6 +7,7 @@ import (
 	"project-backend/database"
 	"project-backend/model"
 	"project-backend/order/request"
+	"project-backend/util/message"
 	response "project-backend/util/response"
 	"strconv"
 	"time"
@@ -15,26 +16,23 @@ import (
 	"gorm.io/gorm"
 )
 
-const (
-	ERROR_PRODUCT_CHANGED = "error_product_changed"
-
-)
 var db *gorm.DB
 
 func CheckCart(w http.ResponseWriter, r *http.Request)  {
-//	1 Get user
-	emailUser := r.Header.Get("email")
-	user := model.User{}
-	err := user.GetByEmail(emailUser)
-	if err != nil {
-		response.RespondWithJSON(w, 400, 0, "User not exists", nil)
-		return
-	}
+	db = database.ConnectDB()
+//	1 Get user ? Sau sửa sau khi login sẽ gửi thông tin người dùng và lưu vào state
+//	emailUser := r.Header.Get("email")
+//	user := model.User{}
+//	err := user.GetByEmail(emailUser)
+//	if err != nil {
+//		response.RespondWithJSON(w, 401, 0, "User not exists", nil)
+//		return
+//	}
 // 2. get request
 	requestCart := request.RequestCheckCart{}
 	err = json.NewDecoder(r.Body).Decode(&requestCart)
 	if err != nil {
-		response.RespondWithJSON(w, 400, 0, "Bad request", nil)
+		response.RespondWithJSON(w, 400, 0, message.ERROR_BAD_REQUEST, nil)
 		return
 	}
 // 3. Check voucher
@@ -45,11 +43,11 @@ func CheckCart(w http.ResponseWriter, r *http.Request)  {
 		voucher := model.Voucher{}
 		err = voucher.GetByCode(requestCart.VoucherCode)
 		if err != nil {
-			response.RespondWithJSON(w, 400, 0, "Voucher not exists", nil)
+			response.RespondWithJSON(w, 400, 0, message.ERROR_VOUCHER_NOT_EXISTS, nil)
 			return
 		}
 		if !time.Now().Before(voucher.TimeEnd) {
-			response.RespondWithJSON(w, 400, 0, "Voucher expired", nil)
+			response.RespondWithJSON(w, 400, 0, message.ERROR_VOUCHER_EXPIRED, nil)
 			return
 		}
 		discount = voucher.Discount
@@ -58,21 +56,30 @@ func CheckCart(w http.ResponseWriter, r *http.Request)  {
 	}
 // check variant
 	for _, item := range requestCart.Cart {
-		err = checkItem(&item)
+		err = checkItem(db,&item)
 		if err != nil {
 			response.RespondWithJSON(w,400,0,err.Error(),item)
 			return
 		}
 	}
+	discountAmount := request.CaculateDiscountAmount(requestCart.Total,discount,maxSaleAmount,unit)
 // check total
+	err = requestCart.CheckCaculation(discountAmount)
+	if err != nil {
+		response.RespondWithJSON(w,400,0,err.Error(),nil)
+		return
+	}
+	response.RespondWithJSON(w,200,1,message.SUCCESS,nil)
 }
-func checkItem(item *request.ItemCheckCart) error{
+
+
+func checkItem(db *gorm.DB,item *request.ItemCheckCart) error{
 	//check price, quantity, variant exist?
 	sql := "SELECT quantity FROM variants WHERE id = ?  AND price = ? AND product_id = ?"
 	quantity := 0
 	db.Raw(sql, item.Variant.Id, item.Variant.Price, item.Id).Scan(&quantity)
 	if item.Quantity > int64(quantity) {
-		return errors.New(ERROR_PRODUCT_CHANGED)
+		return errors.New(message.ERROR_PRODUCT_CHANGED)
 	}
 	return nil
 }
@@ -83,11 +90,11 @@ func GetVoucherByCode(w http.ResponseWriter, r *http.Request) {
 	err := voucher.GetByCode(code)
 	
 	if err != nil {
-		response.RespondWithJSON(w, 400, 0, "Voucher not exists", nil)
+		response.RespondWithJSON(w, 400, 0, message.ERROR_VOUCHER_NOT_EXISTS, nil)
 		return
 	}
 	if !time.Now().Before(voucher.TimeEnd) {
-		response.RespondWithJSON(w, 400, 0, "Voucher expired", nil)
+		response.RespondWithJSON(w, 400, 0, message.ERROR_VOUCHER_EXPIRED, nil)
 		return
 	}
 	response.RespondWithJSON(w, 200, 1, "", voucher)
