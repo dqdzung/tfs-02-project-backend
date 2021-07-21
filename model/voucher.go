@@ -1,8 +1,8 @@
 package model
 
 import (
-	"errors"
-	"time")
+	"time"
+)
 
 
 type Voucher struct {
@@ -18,8 +18,8 @@ type Voucher struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 func (v *Voucher) GetByCode(code string) error{
-	if code == "" {
-		return errors.New("Voucher not exists")
-	}
+	//if code == "" {
+	//	return errors.New("Voucher not exists")
+	//}
 	return 	db.Where("code = ?", code).Take(v).Error
 }

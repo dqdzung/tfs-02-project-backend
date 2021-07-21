@@ -2,20 +2,31 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4a579386-7a82-4a62-8faf-ed1b612c8170" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/product/request/data2cate.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_09_07_2021_2_04_CH_[Default_Changelist]/shelved.patch" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_09_07_2021_2_04_CH__Default_Changelist_.xml" beforeDir="false" />
+      <change afterPath="$PROJECT_DIR$/util/message/error.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/util/message/success.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/product/controller/product_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/product/controller/product_controller.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/product/request/data.json" beforeDir="false" afterPath="$PROJECT_DIR$/product/request/data.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/order/controller/order_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/order/controller/order_controller.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/order/request/request_check_cart.go" beforeDir="false" afterPath="$PROJECT_DIR$/order/request/request_check_cart.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Go File" />
+      </list>
+    </option>
+  </component>
   <component name="GOROOT" url="file://C:/Program Files/Go" />
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="master" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="GoLibraries">
@@ -27,6 +38,7 @@
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="DefaultGoTemplateProperty" value="Go File" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
@@ -84,6 +96,9 @@
     <watches-manager>
       <inline-watch fileUrl="file://$PROJECT_DIR$/order/request/request_create_order.go" line="68">
         <watch expression="validator.CheckLength(c.Name, 50) &amp;&amp; validator.CheckName(c.Name)" />
+      </inline-watch>
+      <inline-watch fileUrl="file://$PROJECT_DIR$/order/controller/order_controller.go" line="79">
+        <watch expression="db.Raw(sql, item.Variant.Id, item.Variant.Price, item.Id).Scan(&amp;quantity).Error.Error()" language="go" />
       </inline-watch>
     </watches-manager>
   </component>

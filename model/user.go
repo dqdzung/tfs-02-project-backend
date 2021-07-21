@@ -22,7 +22,7 @@ type User struct {
 	UpdatedAt time.Time `json:"updated_at"`
 	DeletedAt time.Time `json:"deleted_at"`
 }
-func(u *User) GetUserByEmail(email string) error{
+func(u *User) GetByEmail(email string) error{
 	result := db.Where("email = ?",email).Omit("password").Take(u)
 	return result.Error
 }
