@@ -16,10 +16,10 @@ import (
 	"gorm.io/gorm"
 )
 
-var db *gorm.DB
+// var db *gorm.DB
 
 func CheckCart(w http.ResponseWriter, r *http.Request)  {
-	db = database.ConnectDB()
+	db := database.ConnectDB()
 //	1 Get user ? Sau sửa sau khi login sẽ gửi thông tin người dùng và lưu vào state
 //	emailUser := r.Header.Get("email")
 //	user := model.User{}
