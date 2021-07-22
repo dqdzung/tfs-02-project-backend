@@ -52,7 +52,7 @@ func (o *Order) MapFromCreateOrder(r *request.RequestCreateOrder, userId int64) 
 	o.CreatedAt = time.Now()
 	//o.OrderDetail = make([]OrderDetail, len(r.Carts))
 	var od OrderDetail
-	for _, i := range r.Carts {
+	for _, i := range r.Cart {
 		od.MapFromCreateOrder(i)
 		o.OrderDetail = append(o.OrderDetail, od)
 	}
