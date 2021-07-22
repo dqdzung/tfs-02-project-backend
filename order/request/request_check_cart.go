@@ -2,7 +2,7 @@ package request
 
 import (
 	"errors"
-	"project-backend/util/message"
+	"project-backend/util/constant"
 )
 
 type RequestCheckCart struct {
@@ -17,7 +17,7 @@ type ItemCheckCart struct { // variant
 	Id         int64   `json:"id"`
 	Alias      string  `json:"alias"`
 	Image      string  `json:"image"`
-	ProdutName string  `json:"name"`
+	ProductName string  `json:"name"`
 	Quantity   int64   `json:"quantity"`
 	Stock      int64   `json:"stock"`
 	Variant    Variant `json:"variant"`
@@ -38,10 +38,10 @@ type Variant struct {
 
 func (c RequestCheckCart) CheckCaculation(discountAmount float64) error {
 	if c.Total < 0 || c.DiscountAmount < 0 ||  c.TotalBill < 0{
-		return errors.New(message.ERROR_CACULATE)
+		return errors.New(constant.ERROR_CACULATE)
 	}
 	if c.DiscountAmount != discountAmount {
-		return errors.New(message.ERROR_CACULATE)
+		return errors.New(constant.ERROR_CACULATE)
 	}
 	total := 0.0
 	for _, item := range c.Cart {
@@ -50,11 +50,11 @@ func (c RequestCheckCart) CheckCaculation(discountAmount float64) error {
 
 	totalBill :=  total - c.DiscountAmount
 	if total != c.Total {
-		return errors.New(message.ERROR_CACULATE)
+		return errors.New(constant.ERROR_CACULATE)
 
 	}
 	if totalBill != c.TotalBill {
-		return errors.New(message.ERROR_CACULATE)
+		return errors.New(constant.ERROR_CACULATE)
 	}
 	return nil
 }

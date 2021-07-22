@@ -21,14 +21,14 @@ type OrderDetail struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
-func (od *OrderDetail) MapFromCreateOrder(i request.Item) {
+func (od *OrderDetail) MapFromCreateOrder(i request.ItemCheckCart) {
 	od.ProductName = i.ProductName
-	od.VariantName = i.VariantName
-	od.Price = i.Price
-	od.OriginalPrice = i.OriginalPrice
+	od.VariantName = i.Variant.VariantName
+	od.Price = i.Variant.Price
+	od.OriginalPrice = i.Variant.OriginalPrice
 	od.Quantity = i.Quantity
-	od.Weight = i.Weight
-	od.VariantId = i.Id
+	od.Weight = i.Variant.Weight
+	od.VariantId = i.Variant.Id
 	od.CreatedAt = time.Now()
 
 }
