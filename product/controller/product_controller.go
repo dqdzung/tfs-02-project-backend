@@ -154,8 +154,13 @@ func SearchProduct(w http.ResponseWriter, r *http.Request) {
 	rawLimit := r.URL.Query().Get("limit")
 
 	// check param: số, ký tự đặc biệt
-	nameProduct = strings.Replace(nameProduct, "%", "", -1)
-	nameProduct = strings.Replace(nameProduct, "-", "", -1)
+	nameProduct = strings.Replace(nameProduct, "%", "\\%", -1)
+	fmt.Println("- ",nameProduct)
+
+	nameProduct = strings.Replace(nameProduct, "-", "\\-", -1)
+	fmt.Println("sau",nameProduct)
+	nameProduct = strings.Replace(nameProduct, "'", "\\'", -1)
+	nameProduct = strings.Replace(nameProduct, "_", "\\_", -1)
 
 	pageIndex, err := strconv.Atoi(rawPageIndex)
 	if err != nil {
