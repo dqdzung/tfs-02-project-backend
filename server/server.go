@@ -26,7 +26,7 @@ func RunServer() {
 	auth.AuthRouter(router)
 	product.ProductRouter(router)
 	order.OrderRouter(router)
-	brand.OrderRouter(router)
+	brand.BrandRouter(router)
 	//Orders
 	// router.Methods("GET").Path("/orders").HandlerFunc(controller.GetAllOrders)
 	// router.Methods("POST").Path("/orders").HandlerFunc(controller.AddOrder)
