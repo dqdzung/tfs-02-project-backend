@@ -34,6 +34,10 @@ func CheckCart(w http.ResponseWriter, r *http.Request) {
 		response.RespondWithJSON(w, 400, 0, constant.ERROR_BAD_REQUEST, nil)
 		return
 	}
+	if len(requestCart.Cart) == 0{
+		response.RespondWithJSON(w, 400, 0, constant.ERROR_BAD_REQUEST, nil)
+		return
+	}
 	// 3. Check voucher
 	discount := 0.0
 	unit := constant.UNIT_USA
@@ -113,6 +117,10 @@ func CreateOrder(w http.ResponseWriter, r *http.Request) {
 	requestOrder := request.RequestCreateOrder{}
 	err = json.NewDecoder(r.Body).Decode(&requestOrder)
 	if err != nil {
+		response.RespondWithJSON(w, 400, 0, constant.ERROR_BAD_REQUEST, nil)
+		return
+	}
+	if len(requestOrder.Cart) == 0{
 		response.RespondWithJSON(w, 400, 0, constant.ERROR_BAD_REQUEST, nil)
 		return
 	}

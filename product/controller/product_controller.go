@@ -155,10 +155,7 @@ func SearchProduct(w http.ResponseWriter, r *http.Request) {
 
 	// check param: số, ký tự đặc biệt
 	nameProduct = strings.Replace(nameProduct, "%", "\\%", -1)
-	fmt.Println("- ",nameProduct)
-
-	nameProduct = strings.Replace(nameProduct, "-", "\\-", -1)
-	fmt.Println("sau",nameProduct)
+	// nameProduct = strings.Replace(nameProduct, "-", "\\-", -1)
 	nameProduct = strings.Replace(nameProduct, "'", "\\'", -1)
 	nameProduct = strings.Replace(nameProduct, "_", "\\_", -1)
 
@@ -200,7 +197,7 @@ func SearchProduct(w http.ResponseWriter, r *http.Request) {
 	var totalElement int64
 	db.Raw("SELECT COUNT(*) FROM products WHERE " + sql).Scan(&totalElement)
 	if totalElement == 0 {
-		resultResponse.RespondWithJSON(w, 200, 1, "Not found", nil)
+		resultResponse.RespondWithJSON(w, 404, 1, "Not found", nil)
 		return
 	}
 	totalPage := int(math.Ceil(float64(totalElement) / float64(limit)))
