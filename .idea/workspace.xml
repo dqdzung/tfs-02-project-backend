@@ -3,15 +3,12 @@
   <component name="ChangeListManager">
     <list default="true" id="4a579386-7a82-4a62-8faf-ed1b612c8170" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/order.go" beforeDir="false" afterPath="$PROJECT_DIR$/model/order.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/order_detail.go" beforeDir="false" afterPath="$PROJECT_DIR$/model/order_detail.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/voucher.go" beforeDir="false" afterPath="$PROJECT_DIR$/model/voucher.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/order/controller/order_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/order/controller/order_controller.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/order/request/request_check_cart.go" beforeDir="false" afterPath="$PROJECT_DIR$/order/request/request_check_cart.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/order/request/request_create_order.go" beforeDir="false" afterPath="$PROJECT_DIR$/order/request/request_create_order.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/order/response/response_check_cart.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/util/message/error.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/util/message/success.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/order/request/request_create_order.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/order/router/order_router.go" beforeDir="false" afterPath="$PROJECT_DIR$/order/router/order_router.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/constant/message.go" beforeDir="false" afterPath="$PROJECT_DIR$/util/constant/message.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -98,32 +95,18 @@
     <integration-enabled>true</integration-enabled>
   </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/order/request/request_create_order.go</url>
-          <line>32</line>
-          <option name="timeStamp" value="3" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/order/controller/order_controller.go</url>
-          <line>112</line>
-          <option name="timeStamp" value="4" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
     <watches-manager>
       <inline-watch fileUrl="file://$PROJECT_DIR$/order/request/request_create_order.go" line="37">
-        <watch expression="c.Cart" language="go" />
+        <watch expression="c.Cart" />
       </inline-watch>
-      <inline-watch fileUrl="file://$PROJECT_DIR$/order/controller/order_controller.go" line="77">
-        <watch expression="db.Raw(sql, item.Variant.Id, item.Variant.Price, item.Id).Scan(&amp;quantity).Error.Error()" language="go" />
+      <inline-watch fileUrl="file://$PROJECT_DIR$/order/controller/order_controller.go" line="248">
+        <watch expression="requestOrder" />
       </inline-watch>
-      <inline-watch fileUrl="file://$PROJECT_DIR$/order/controller/order_controller.go" line="112">
+      <inline-watch fileUrl="file://$PROJECT_DIR$/order/controller/order_controller.go" line="247">
         <watch expression="requestOrder" language="go" />
       </inline-watch>
-      <inline-watch fileUrl="file://$PROJECT_DIR$/order/controller/order_controller.go" line="113">
-        <watch expression="requestOrder" />
+      <inline-watch fileUrl="file://$PROJECT_DIR$/order/controller/order_controller.go" line="84">
+        <watch expression="db.Raw(sql, item.Variant.Id, item.Variant.Price, item.Id).Scan(&amp;quantity).Error.Error()" language="go" />
       </inline-watch>
     </watches-manager>
   </component>
